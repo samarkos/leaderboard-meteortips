@@ -89,8 +89,12 @@ Meteor.methods({
 		check(selectedPlayer, String);
 		check(scoreValue, Number);
 		var currentUserId = Meteor.userId();
-		if(currentUserId && (scoreValue == 5 || scoreValue == -5))
+		var playerScore = PlayersList.findOne({ _id: selectedPlayer }).score;
+		if (scoreValue == -5 && playerScore <= 0) {	
+			// do nothing		
+		} else if (currentUserId && (scoreValue == 5 || scoreValue == -5)) {
 			PlayersList.update({ _id: selectedPlayer, createdBy: currentUserId },
 							{ $inc: { score: scoreValue }});
+		}
 	}
 });
