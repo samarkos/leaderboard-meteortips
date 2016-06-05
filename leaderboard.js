@@ -45,10 +45,9 @@ if(Meteor.isClient){
 	Template.addPlayerForm.events({
 		"submit form": function(event){
 			event.preventDefault();
-			var playerNameVar = event.target.playerName.value;			
-			if(event.target.playerScore.value)
-				var playerScoreVar = parseInt(event.target.playerScore.value);
-			else
+			var playerNameVar = event.target.playerName.value;
+			var playerScoreVar = parseInt(event.target.playerScore.value);			
+			if(!playerScoreVar || playerScoreVar < 0)				
 				var playerScoreVar = 0;			
 			Meteor.call("createPlayer", playerNameVar, playerScoreVar);
 			event.target.playerName.value = "";
@@ -89,8 +88,12 @@ Meteor.methods({
 		check(selectedPlayer, String);
 		check(scoreValue, Number);
 		var currentUserId = Meteor.userId();
-		if(currentUserId && (scoreValue == 5 || scoreValue == -5))
+		var playerScore = PlayersList.findOne({ _id: selectedPlayer }).score;
+		if (scoreValue == -5 && playerScore <= 0) {	
+			// do nothing		
+		} else if (currentUserId && (scoreValue == 5 || scoreValue == -5)) {
 			PlayersList.update({ _id: selectedPlayer, createdBy: currentUserId },
 							{ $inc: { score: scoreValue }});
+		}
 	}
 });
