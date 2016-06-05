@@ -45,10 +45,9 @@ if(Meteor.isClient){
 	Template.addPlayerForm.events({
 		"submit form": function(event){
 			event.preventDefault();
-			var playerNameVar = event.target.playerName.value;			
-			if(event.target.playerScore.value)
-				var playerScoreVar = parseInt(event.target.playerScore.value);
-			else
+			var playerNameVar = event.target.playerName.value;
+			var playerScoreVar = parseInt(event.target.playerScore.value);			
+			if(!playerScoreVar || playerScoreVar < 0)				
 				var playerScoreVar = 0;			
 			Meteor.call("createPlayer", playerNameVar, playerScoreVar);
 			event.target.playerName.value = "";
